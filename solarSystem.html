@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Solar System</title>
+    <script src="three.min.js"></script>
+
+    <script>
+        // I worked individually on this assignment.
+
+        var scene, camera, renderer;  // Three.js rendering basics.
+
+        var canvas;  // The canvas on which the image is rendered.
+
+        var dirLight; // Our directional light is global so we can change its position.
+        var angle;    // The angle (about the y-axis) of the directional light.
+
+        var sunSphere;
+        var earthSphere;
+        var moonSphere;
+
+        var solarSystem;
+        var earth;
+        var moon;
+
+        // Create the scene. This function is called once, as soon as the page loads.
+        // The renderer has already been created before this function is called.
+        function createWorld() {
+
+            renderer.setClearColor(0); // Set background color (0, or 0x000000, is black).
+            scene = new THREE.Scene(); // Create a new scene which we can add objects to.
+
+            // create a camera, sitting on the positive z-axis.  The camera is not part of the scene.
+            camera = new THREE.PerspectiveCamera(45, canvas.width / canvas.height, 0.1, 300);
+            camera.position.z = 300; // pull back the camera
+
+            // ambient light
+            var ambientLight = new THREE.AmbientLight("orange");
+            scene.add(ambientLight);
+            
+            // point light
+            pointLight = new THREE.PointLight("white", 3, 150);
+            pointLight.position.set(20, 5, 70);
+            scene.add(pointLight);
+
+            // directional light
+            dirLight = new THREE.DirectionalLight("white", 3);
+            dirLight.position.set(100, 0, 50);
+            scene.add(dirLight);
+
+            solarSystem = new THREE.Object3D();
+            scene.add(solarSystem);
+
+            var loader2 = new THREE.TextureLoader();
+            var sunTexture = loader2.load("sun.jpg");
+            var sunMaterial = new THREE.MeshPhongMaterial({ map: sunTexture });
+
+            // create the sun
+            var sunSphereGeometry = new THREE.SphereGeometry(20, 20, 20);
+            var sunSphereMaterial = new THREE.MeshLambertMaterial({ color: "orange" });
+            sunSphere = new THREE.Mesh(sunSphereGeometry, sunMaterial);
+            solarSystem.add(sunSphere);
+
+            // create the earth system
+            earth = new THREE.Object3D();
+            earth.position.x = 50;
+            solarSystem.add(earth);
+
+            var loader1 = new THREE.TextureLoader();
+            var earthTexture = loader1.load("earth.jpg");
+            var earthMaterial = new THREE.MeshPhongMaterial({ map: earthTexture });
+
+            // create the earth
+            var earthSphereGeometry = new THREE.SphereGeometry(12, 20, 20);
+            var earthSphereMaterial = new THREE.MeshLambertMaterial({ color: "green" });
+            earthSphere = new THREE.Mesh(earthSphereGeometry, earthMaterial);
+            earthSphere.position.x = 50;
+            solarSystem.add(earthSphere);
+
+            // create the moon system
+            moon = new THREE.Object3D();
+            moon.position.x = 11;
+            earth.add(moon);
+
+            var loader = new THREE.TextureLoader();
+            var moonTexture = loader.load("moon.jpg");
+            var moonMaterial = new THREE.MeshPhongMaterial({ map: moonTexture });
+
+            // create the moon
+            var moonSphereGeometry = new THREE.SphereGeometry(7, 20, 20);
+            var moonSphereMaterial = new THREE.MeshLambertMaterial({ color: "blue" });
+            moonSphere = new THREE.Mesh(moonSphereGeometry, moonMaterial);
+            moonSphere.position.x = 11;
+            moon.add(moonSphere);
+
+            // create the second earth system
+            earthSphere2 = new THREE.Mesh(earthSphereGeometry, earthMaterial);
+            earthSphere2.position.x = -50;
+            solarSystem.add(earthSphere2);
+
+            earth2 = new THREE.Object3D();
+            earth2.position.x = -50;
+            solarSystem.add(earth2);
+
+            moon2 = new THREE.Object3D();
+            moon2.position.x = 11;
+            earth2.add(moon2);
+
+            moonSphere2 = new THREE.Mesh(moonSphereGeometry, moonMaterial);
+            moonSphere2.position.x = 11;
+            moon2.add(moonSphere2);
+
+            solarSystem2 = new THREE.Object3D();
+            scene.add(solarSystem2);
+
+            // create the second sun
+            sunSphere2 = new THREE.Mesh(sunSphereGeometry, sunMaterial);
+            sunSphere2.position.y = 100;
+            solarSystem2.add(sunSphere2);
+
+            sunSphere3 = new THREE.Mesh(sunSphereGeometry, sunMaterial);
+            sunSphere3.position.y = -100;
+            solarSystem2.add(sunSphere3);
+        }
+
+        // Render the scene. This is called for each frame of the animation.
+        angle = 0;
+        function render() {
+            requestAnimationFrame(render);
+
+            solarSystem.rotation.z += 0.03;
+            solarSystem2.rotation.z -= 0.03;
+            earth.rotation.z += 0.03;
+            earth2.rotation.z += 0.03;
+            renderer.render(scene, camera);
+        }
+
+        //----------------------------------------------------------------------------------
+
+        // The init() function is called by the onload event when the document has loaded.
+        function init() {
+            try {
+                canvas = document.getElementById("glcanvas");
+                renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+            }
+            catch (e) {
+                document.getElementById("canvas-holder").innerHTML = "<h3><b>WebGL is not available.</b><h3>";
+                return;
+            }
+
+            // create world and render scene
+            createWorld();
+            render();
+        }
+
+    </script>
+
+</head>
+
+<body onload="init()">
+    <div id="canvas-holder">
+        <canvas id="glcanvas" width="600" height="400"></canvas>
+    </div>
+</body>
+
+</html>
